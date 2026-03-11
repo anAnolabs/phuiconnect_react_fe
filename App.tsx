@@ -3,8 +3,9 @@
 // iOS · Android · Web
 // =============================================
 import React, { useState } from 'react';
-import { View, StyleSheet, StatusBar, Platform } from 'react-native';
+import { View, StyleSheet, StatusBar, Platform, ActivityIndicator, Text } from 'react-native';
 import { COLORS } from './src/constants/theme';
+import { AuthProvider, useAuth } from './src/contexts/AuthContext';
 
 // Screens
 import LoginScreen from './src/screens/auth/LoginScreen';
@@ -25,8 +26,16 @@ type AppScreen =
   | { name: 'Stadiums' };
 
 function App() {
-  // Auth state
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
+  );
+}
+
+function AppContent() {
+  // Auth state from context
+  const { isAuthenticated, isLoading, signOut } = useAuth();
 
   // Navigation state
   const [screen, setScreen] = useState<AppScreen>({ name: 'Main' });
@@ -66,11 +75,24 @@ function App() {
   };
 
   // Auth screen
-  if (!isLoggedIn) {
+  if (isLoading) {
     return (
       <>
         <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
-        <LoginScreen onLogin={() => setIsLoggedIn(true)} />
+        <View style={styles.loadingContainer}>
+          <Text style={styles.loadingIcon}>⚽</Text>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+          <Text style={styles.loadingText}>Đang tải...</Text>
+        </View>
+      </>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <>
+        <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
+        <LoginScreen onLogin={() => {}} />
       </>
     );
   }
@@ -113,7 +135,7 @@ function App() {
       case 'Teams':
         return <TeamsScreen onNavigate={navigate} />;
       case 'Profile':
-        return <ProfileScreen onNavigate={navigate} onLogout={() => setIsLoggedIn(false)} />;
+        return <ProfileScreen onNavigate={navigate} onLogout={() => signOut()} />;
       default:
         return <HomeScreen onNavigate={navigate} />;
     }
@@ -135,6 +157,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
     ...(Platform.OS === 'web' ? { maxWidth: 480, alignSelf: 'center' as const, width: '100%' } : {}),
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
+  },
+  loadingIcon: {
+    fontSize: 48,
+    marginBottom: 16,
+  },
+  loadingText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: COLORS.primary,
+    fontWeight: '600',
   },
 });
 

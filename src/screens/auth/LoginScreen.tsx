@@ -10,18 +10,24 @@ import {
   ScrollView,
   Platform,
   KeyboardAvoidingView,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../../constants/theme';
 import { Button, Input } from '../../components/ui';
+import { useAuth } from '../../contexts/AuthContext';
 
 interface LoginScreenProps {
   onLogin: () => void;
 }
 
 export default function LoginScreen({ onLogin }: LoginScreenProps) {
+  const { signInWithGoogle } = useAuth();
   const [phone, setPhone] = useState('');
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState('');
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSendOtp = () => {
     setOtpSent(true);
@@ -29,6 +35,27 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
 
   const handleVerifyOtp = () => {
     onLogin();
+  };
+
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    setErrorMessage('');
+    try {
+      const result = await signInWithGoogle();
+      if (result.success) {
+        onLogin();
+      } else {
+        const msg = result.error || 'Đăng nhập Google thất bại';
+        setErrorMessage(msg);
+        if (Platform.OS !== 'web') {
+          Alert.alert('Lỗi đăng nhập', msg);
+        }
+      }
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Có lỗi xảy ra');
+    } finally {
+      setIsGoogleLoading(false);
+    }
   };
 
   return (
@@ -100,21 +127,40 @@ export default function LoginScreen({ onLogin }: LoginScreenProps) {
             <View style={styles.dividerLine} />
           </View>
 
+          {/* Error Message */}
+          {errorMessage ? (
+            <View style={styles.errorBox}>
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            </View>
+          ) : null}
+
           {/* Social Login */}
           <View style={styles.socialButtons}>
-            <TouchableOpacity style={styles.socialBtn} onPress={onLogin}>
-              <Text style={styles.socialIcon}>🔵</Text>
-              <Text style={styles.socialText}>Google</Text>
+            <TouchableOpacity
+              style={[styles.socialBtn, styles.googleBtn]}
+              onPress={handleGoogleSignIn}
+              disabled={isGoogleLoading}>
+              {isGoogleLoading ? (
+                <ActivityIndicator size="small" color={COLORS.primary} />
+              ) : (
+                <>
+                  <Text style={styles.socialIcon}>🔵</Text>
+                  <Text style={styles.socialText}>Google</Text>
+                </>
+              )}
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialBtn} onPress={onLogin}>
+            <TouchableOpacity style={[styles.socialBtn, styles.disabledBtn]} disabled>
               <Text style={styles.socialIcon}>🍎</Text>
-              <Text style={styles.socialText}>Apple</Text>
+              <Text style={[styles.socialText, styles.disabledText]}>Apple</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialBtn} onPress={onLogin}>
+            <TouchableOpacity style={[styles.socialBtn, styles.disabledBtn]} disabled>
               <Text style={styles.socialIcon}>🔷</Text>
-              <Text style={styles.socialText}>Facebook</Text>
+              <Text style={[styles.socialText, styles.disabledText]}>Facebook</Text>
             </TouchableOpacity>
           </View>
+          <Text style={styles.comingSoonNote}>
+            * Apple & Facebook sắp ra mắt
+          </Text>
         </View>
 
         {/* Features */}
@@ -261,5 +307,34 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
     textAlign: 'center',
     fontWeight: '500',
+  },
+  errorBox: {
+    backgroundColor: '#FEE2E2',
+    borderRadius: RADIUS.md,
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
+  },
+  errorText: {
+    color: '#DC2626',
+    fontSize: FONTS.sizes.sm,
+    textAlign: 'center',
+    fontWeight: '500',
+  },
+  googleBtn: {
+    borderColor: COLORS.primary,
+    borderWidth: 2,
+  },
+  disabledBtn: {
+    opacity: 0.4,
+  },
+  disabledText: {
+    color: COLORS.textLight,
+  },
+  comingSoonNote: {
+    fontSize: FONTS.sizes.xs || 11,
+    color: COLORS.textLight,
+    textAlign: 'center',
+    marginTop: SPACING.sm,
+    fontStyle: 'italic',
   },
 });
