@@ -93,7 +93,8 @@ async function getGoogleIdTokenWeb(): Promise<string> {
   // For web, we use Google Identity Services (GSI)
   // This requires the GSI script to be loaded in index.html
   return new Promise((resolve, reject) => {
-    const google = (window as any).google;
+    const w = typeof globalThis !== 'undefined' ? globalThis : ({} as any);
+    const google = (w as any).google;
     if (!google?.accounts?.id) {
       reject(new Error('Google Identity Services not loaded. Add GSI script to index.html'));
       return;
