@@ -1,0 +1,34 @@
+{
+  "name": "projects/4208321827794119799",
+  "projectId": "4208321827794119799",
+  "title": "PhuiConnect App",
+  "visibility": "PRIVATE",
+  "projectType": "PROJECT_DESIGN",
+  "origin": "STITCH",
+  "deviceType": "MOBILE",
+  "designTheme": {
+    "colorMode": "LIGHT",
+    "font": "INTER",
+    "roundness": "ROUND_EIGHT",
+    "customColor": "#2fc171",
+    "saturation": 3
+  },
+  "screens": {
+    "home_variant1": {
+      "id": "54f17cc58098456ca41cf9b6b76894b8",
+      "sourceScreen": "projects/4208321827794119799/screens/54f17cc58098456ca41cf9b6b76894b8",
+      "width": 390,
+      "height": 1060
+    },
+    "home_variant2": {
+      "id": "e371ca87e285453486eaebd0a2a9e930",
+      "sourceScreen": "projects/4208321827794119799/screens/e371ca87e285453486eaebd0a2a9e930",
+      "x": 454,
+      "width": 390,
+      "height": 931
+    }
+  },
+  "metadata": {
+    "userRole": "OWNER"
+  }
+}

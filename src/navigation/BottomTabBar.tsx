@@ -11,19 +11,20 @@ import {
 } from 'react-native';
 import { COLORS, FONTS, SPACING, SHADOWS } from '../constants/theme';
 
-export type TabName = 'Home' | 'FindMatch' | 'FindPlayer' | 'Teams' | 'Profile';
+export type TabName = 'Home' | 'Search' | 'Teams' | 'Profile';
 
 interface TabBarProps {
   activeTab: TabName;
   onChangeTab: (tab: TabName) => void;
 }
 
+import Icon from '../components/Icon';
+
 const TABS: { key: TabName; icon: string; label: string }[] = [
-  { key: 'Home', icon: '🏠', label: 'Trang chủ' },
-  { key: 'FindMatch', icon: '⚔️', label: 'Tìm đối' },
-  { key: 'FindPlayer', icon: '🙋', label: 'Tìm người' },
-  { key: 'Teams', icon: '👥', label: 'Đội bóng' },
-  { key: 'Profile', icon: '👤', label: 'Cá nhân' },
+  { key: 'Home', icon: 'home', label: 'Home' },
+  { key: 'Search', icon: 'search', label: 'Search' },
+  { key: 'Teams', icon: 'groups', label: 'Teams' },
+  { key: 'Profile', icon: 'person', label: 'Profile' },
 ];
 
 export default function BottomTabBar({ activeTab, onChangeTab }: TabBarProps) {
@@ -37,9 +38,13 @@ export default function BottomTabBar({ activeTab, onChangeTab }: TabBarProps) {
             style={styles.tab}
             onPress={() => onChangeTab(tab.key)}
             activeOpacity={0.7}>
-            <Text style={[styles.icon, isActive && styles.iconActive]}>{tab.icon}</Text>
+            <Icon 
+               name={tab.icon} 
+               size={24} 
+               color={isActive ? COLORS.primary : COLORS.textSecondary} 
+               filled={isActive}
+            />
             <Text style={[styles.label, isActive && styles.labelActive]}>{tab.label}</Text>
-            {isActive && <View style={styles.indicator} />}
           </TouchableOpacity>
         );
       })}
@@ -53,9 +58,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     borderTopWidth: 1,
     borderTopColor: COLORS.border,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 8,
-    paddingTop: 8,
-    ...SHADOWS.lg,
+    paddingBottom: Platform.OS === 'ios' ? 24 : 12,
+    paddingTop: 12,
+    ...SHADOWS.md,
   },
   tab: {
     flex: 1,
@@ -73,20 +78,14 @@ const styles = StyleSheet.create({
     opacity: 1,
   },
   label: {
-    fontSize: FONTS.sizes.xs,
-    color: COLORS.textLight,
+    fontFamily: FONTS.medium,
+    fontSize: 10,
+    color: COLORS.textSecondary,
     fontWeight: '500',
+    marginTop: 4,
   },
   labelActive: {
     color: COLORS.primary,
     fontWeight: '700',
-  },
-  indicator: {
-    position: 'absolute',
-    top: -8,
-    width: 24,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: COLORS.primary,
   },
 });

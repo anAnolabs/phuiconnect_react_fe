@@ -9,11 +9,13 @@
     "web:build": "webpack --mode production --config webpack.config.js",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "figma:export": "node scripts/figma-export.js"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^3.0.1",
     "@react-native/new-app-screen": "0.84.0",
+    "playwright": "^1.58.2",
     "react": "19.2.3",
     "react-dom": "^19.2.3",
     "react-native": "0.84.0",

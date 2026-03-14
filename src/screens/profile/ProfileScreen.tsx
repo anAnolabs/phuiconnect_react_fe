@@ -1,18 +1,14 @@
 // =============================================
 // PhuiConnect - Player Profile Screen
 // =============================================
-import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  Platform,
-} from 'react-native';
-import { COLORS, FONTS, SPACING, RADIUS, SHADOWS, POSITIONS, SKILL_LABELS } from '../../constants/theme';
-import { Avatar, Badge, Card, SkillBar, Rating, Button, SectionHeader } from '../../components/ui';
-import { MOCK_PLAYER, MOCK_TEAMS } from '../../data/mockData';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { COLORS, FONTS, SPACING, RADIUS, SHADOWS, POSITIONS } from '../../constants/theme';
+import { SkillBar } from '../../components/ui';
+import Header from '../../components/Header';
+import ActivityCard from '../../components/ActivityCard';
+import Icon from '../../components/Icon';
+import { MOCK_PLAYER, MOCK_FEED } from '../../data/mockData';
 
 interface ProfileScreenProps {
   onNavigate: (screen: string, params?: any) => void;
@@ -21,164 +17,92 @@ interface ProfileScreenProps {
 
 export default function ProfileScreen({ onNavigate, onLogout }: ProfileScreenProps) {
   const player = MOCK_PLAYER;
-  const myTeams = MOCK_TEAMS.filter(t => player.teams.includes(t.id));
+  const [activeTab, setActiveTab] = useState('Hoạt động');
 
-  const skillColors: Record<string, string> = {
-    speed: '#3B82F6',
-    passing: '#10B981',
-    shooting: '#EF4444',
-    dribbling: '#F59E0B',
-    defending: '#8B5CF6',
-    stamina: '#06B6D4',
-  };
+  const tabs = ['Hoạt động', 'Đội bóng', 'Highlights'];
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerTop}>
-          <Text style={styles.headerTitle}>Hồ sơ</Text>
-          <TouchableOpacity>
-            <Text style={styles.editBtn}>✏️ Sửa</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.profileHeader}>
-          <Avatar name={player.fullName} size={80} />
-          <View style={styles.profileInfo}>
-            <Text style={styles.playerName}>{player.fullName}</Text>
-            <View style={styles.profileTags}>
-              <Badge text={POSITIONS[player.preferredPosition]} color={COLORS.primary} />
-              {player.secondaryPosition && (
-                <Badge text={POSITIONS[player.secondaryPosition]} color={COLORS.accent} />
-              )}
-            </View>
-            <Rating rating={player.rating} />
-          </View>
-        </View>
-      </View>
+      <Header />
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        {/* Stats Row */}
-        <View style={styles.statsRow}>
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{player.totalMatches}</Text>
-            <Text style={styles.statLabel}>Trận</Text>
+        
+        {/* Player Info Card */}
+        <View style={styles.playerCard}>
+          <View style={styles.avatarWrapper}>
+             <Image source={{ uri: "https://lh3.googleusercontent.com/aida-public/AB6AXuBoF1EfU2KuNc2b8s0_iqiZ2uVSkYmPpjyxVXPZ5pof6FNXVOWUWqty6q_jf-ZOeMpJygoHyvhKsDgcqDeUSLQ9_5kcKIVcbRd8cU49cUcacWNFdyH9XRf7QNZuY9H8Ax1-NqE0t6wC7lvvZOGVk14HKmWSjCI6jmOdEClHia1wTGR2Y66DdrYQFjXrvMx55sQL458QIL0A0htOqa2IjtdFHImTooMr3fnn2GXhbalKuYbpiZnsTT_HETdmCf9H-dZnv3mZrXVvud0" }} style={styles.avatarImg} />
           </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{player.rating.toFixed(1)}</Text>
-            <Text style={styles.statLabel}>Đánh giá</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{player.skillLevel}</Text>
-            <Text style={styles.statLabel}>Skill</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statValue}>{myTeams.length}</Text>
-            <Text style={styles.statLabel}>Đội bóng</Text>
-          </View>
+          <Text style={styles.playerName}>{player.fullName}</Text>
+          <Text style={styles.playerPosition}>{POSITIONS[player.preferredPosition]}</Text>
+          <Text style={styles.playerMeta}>
+             <Icon name="location_on" size={16} color={COLORS.textSecondary} style={{ marginRight: 2 }} />
+             {player.city}
+          </Text>
         </View>
 
-        {/* Bio */}
-        <Card style={styles.section}>
-          <Text style={styles.sectionTitle}>📝 Giới thiệu</Text>
-          <Text style={styles.bioText}>{player.bio}</Text>
-          <View style={styles.infoGrid}>
-            <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>Năm sinh</Text>
-              <Text style={styles.infoValue}>{player.birthYear}</Text>
-            </View>
-            <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>Chiều cao</Text>
-              <Text style={styles.infoValue}>{player.height} cm</Text>
-            </View>
-            <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>Cân nặng</Text>
-              <Text style={styles.infoValue}>{player.weight} kg</Text>
-            </View>
-            <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>Chân thuận</Text>
-              <Text style={styles.infoValue}>{player.dominantFoot === 'right' ? 'Phải' : player.dominantFoot === 'left' ? 'Trái' : 'Cả hai'}</Text>
-            </View>
-            <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>Khu vực</Text>
-              <Text style={styles.infoValue}>{player.district}, {player.city}</Text>
-            </View>
-            <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>Phong cách</Text>
-              <Text style={styles.infoValue}>
-                {player.playStyle === 'attacking' ? '⚡ Tấn công' : player.playStyle === 'defending' ? '🛡️ Phòng ngự' : '🎯 Kiến tạo'}
+        {/* Stats Row */}
+        <View style={styles.statsScrollContainer}>
+           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.statsRow}>
+             <View style={styles.statBox}>
+               <Text style={styles.statLabel}>Bàn thắng</Text>
+               <Text style={styles.statNum}>12</Text>
+             </View>
+             <View style={styles.statBox}>
+               <Text style={styles.statLabel}>Kiến tạo</Text>
+               <Text style={styles.statNum}>24</Text>
+             </View>
+             <View style={styles.statBox}>
+               <Text style={[styles.statLabel, { textAlign: 'center' }]}>Số trận\nđã đá</Text>
+               <Text style={styles.statNum}>45</Text>
+             </View>
+           </ScrollView>
+        </View>
+
+        {/* Skills Section */}
+        <View style={styles.skillsSection}>
+           <Text style={styles.sectionTitle}>Chỉ số kỹ năng</Text>
+           <View style={styles.skillsList}>
+              <SkillBar label="Tốc độ" value={player.skills.speed || 85} color={COLORS.primary} />
+              <SkillBar label="Chuyền bóng" value={player.skills.passing || 78} color={COLORS.primary} />
+              <SkillBar label="Sút bóng" value={player.skills.shooting || 70} color={COLORS.primary} />
+              <SkillBar label="Phòng ngự" value={player.skills.defending || 65} color={COLORS.primary} />
+           </View>
+        </View>
+
+        {/* Tab Navigation */}
+        <View style={styles.tabContainer}>
+          {tabs.map(tab => (
+            <TouchableOpacity 
+              key={tab} 
+              style={[styles.tabBtn, activeTab === tab && styles.tabBtnActive]}
+              onPress={() => setActiveTab(tab)}
+            >
+              <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
+                {tab}
               </Text>
-            </View>
-          </View>
-        </Card>
-
-        {/* Skills */}
-        <Card style={styles.section}>
-          <Text style={styles.sectionTitle}>📊 Chỉ số kỹ năng</Text>
-          {Object.entries(player.skills).map(([key, val]) => (
-            <SkillBar
-              key={key}
-              label={SKILL_LABELS[key] || key}
-              value={val}
-              color={skillColors[key] || COLORS.primary}
-            />
+            </TouchableOpacity>
           ))}
-        </Card>
+        </View>
 
-        {/* Teams */}
-        <Card style={styles.section}>
-          <Text style={styles.sectionTitle}>👥 Đội bóng</Text>
-          {myTeams.length > 0 ? (
-            myTeams.map(team => (
-              <TouchableOpacity
-                key={team.id}
-                style={styles.teamItem}
-                onPress={() => onNavigate('TeamDetail', { teamId: team.id })}>
-                <Avatar name={team.name} size={44} />
-                <View style={styles.teamInfo}>
-                  <Text style={styles.teamName}>{team.name}</Text>
-                  <Text style={styles.teamMeta}>{team.district} · {team.memberCount} thành viên</Text>
-                </View>
-                <Text style={styles.arrow}>›</Text>
-              </TouchableOpacity>
-            ))
-          ) : (
-            <Text style={styles.emptyText}>Chưa tham gia đội nào</Text>
-          )}
-          <Button title="+ Tạo đội mới" onPress={() => onNavigate('CreateTeam')} variant="outline" size="sm" style={{ marginTop: SPACING.md }} />
-        </Card>
-
-        {/* Preferred Play Time */}
-        <Card style={styles.section}>
-          <Text style={styles.sectionTitle}>🕐 Thời gian rảnh</Text>
-          <View style={styles.timeSlots}>
-            {(['morning', 'afternoon', 'evening', 'night'] as const).map(time => {
-              const isActive = player.preferredPlayTime.includes(time);
-              const labels: Record<string, string> = {
-                morning: '🌅 Sáng',
-                afternoon: '☀️ Chiều',
-                evening: '🌆 Tối',
-                night: '🌙 Đêm',
-              };
-              return (
-                <View
-                  key={time}
-                  style={[styles.timeSlot, isActive && styles.timeSlotActive]}>
-                  <Text style={[styles.timeSlotText, isActive && styles.timeSlotTextActive]}>
-                    {labels[time]}
-                  </Text>
-                </View>
-              );
-            })}
-          </View>
-        </Card>
-
-        {/* Logout */}
-        <View style={styles.logoutSection}>
-          <Button title="Đăng xuất" onPress={onLogout} variant="outline" icon="🚪" />
+        {/* Tab Content */}
+        <View style={styles.tabContent}>
+           {activeTab === 'Hoạt động' && (
+             <>
+               {MOCK_FEED.map(activity => (
+                 <ActivityCard key={activity.id} activity={activity} />
+               ))}
+             </>
+           )}
+           {activeTab === 'Đội bóng' && (
+             <View style={styles.placeholderContent}>
+                <Text style={styles.placeholderText}>Chưa có thông tin đội bóng.</Text>
+             </View>
+           )}
+           {activeTab === 'Highlights' && (
+             <View style={styles.placeholderContent}>
+                <Text style={styles.placeholderText}>Chưa có video highlights.</Text>
+             </View>
+           )}
         </View>
 
         <View style={{ height: 100 }} />
@@ -192,172 +116,135 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  header: {
-    backgroundColor: COLORS.primary,
-    paddingTop: Platform.OS === 'web' ? 20 : 56,
-    paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.xxl,
-  },
-  headerTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: SPACING.lg,
-  },
-  headerTitle: {
-    fontSize: FONTS.sizes.xxl,
-    fontWeight: '700',
-    color: COLORS.textWhite,
-  },
-  editBtn: {
-    fontSize: FONTS.sizes.md,
-    color: '#D1FAE5',
-    fontWeight: '600',
-  },
-  profileHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  profileInfo: {
-    marginLeft: SPACING.lg,
-    flex: 1,
-  },
-  playerName: {
-    fontSize: FONTS.sizes.xl,
-    fontWeight: '700',
-    color: COLORS.textWhite,
-    marginBottom: 4,
-  },
-  profileTags: {
-    flexDirection: 'row',
-    gap: 6,
-    marginBottom: 6,
-  },
   scroll: {
     flex: 1,
   },
-  statsRow: {
-    flexDirection: 'row',
-    backgroundColor: COLORS.surface,
-    marginHorizontal: SPACING.xl,
-    marginTop: -16,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
+  playerCard: {
+    alignItems: 'center',
+    paddingVertical: SPACING.xl,
+    paddingBottom: SPACING.md,
+    position: 'relative',
+  },
+  avatarWrapper: {
+    marginBottom: SPACING.md,
+    width: 96,
+    height: 96,
+    borderRadius: RADIUS.full,
     ...SHADOWS.md,
-    marginBottom: SPACING.md,
+    overflow: 'hidden',
   },
-  statItem: {
-    flex: 1,
-    alignItems: 'center',
+  avatarImg: {
+    width: '100%',
+    height: '100%',
   },
-  statValue: {
-    fontSize: FONTS.sizes.xl,
-    fontWeight: '800',
-    color: COLORS.primary,
-  },
-  statLabel: {
-    fontSize: FONTS.sizes.xs,
-    color: COLORS.textSecondary,
-    marginTop: 2,
-  },
-  statDivider: {
-    width: 1,
-    backgroundColor: COLORS.divider,
-    marginVertical: 4,
-  },
-  section: {
-    marginHorizontal: SPACING.xl,
-  },
-  sectionTitle: {
-    fontSize: FONTS.sizes.lg,
+  playerName: {
+    fontFamily: FONTS.bold,
+    fontSize: 24,
+    color: COLORS.textPrimary,
     fontWeight: '700',
-    color: COLORS.textPrimary,
-    marginBottom: SPACING.md,
+    marginBottom: 4,
   },
-  bioText: {
+  playerPosition: {
+    fontFamily: FONTS.medium,
     fontSize: FONTS.sizes.md,
-    color: COLORS.textSecondary,
-    lineHeight: 22,
-    marginBottom: SPACING.lg,
+    color: COLORS.primary,
+    fontWeight: '500',
+    marginBottom: 4,
   },
-  infoGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: SPACING.sm,
-  },
-  infoItem: {
-    width: '47%',
-    backgroundColor: COLORS.background,
-    borderRadius: RADIUS.md,
-    padding: SPACING.md,
-  },
-  infoLabel: {
-    fontSize: FONTS.sizes.xs,
-    color: COLORS.textLight,
-    marginBottom: 2,
-  },
-  infoValue: {
-    fontSize: FONTS.sizes.md,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-  },
-  teamItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: SPACING.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.divider,
-  },
-  teamInfo: {
-    flex: 1,
-    marginLeft: SPACING.md,
-  },
-  teamName: {
-    fontSize: FONTS.sizes.md,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-  },
-  teamMeta: {
+  playerMeta: {
+    fontFamily: FONTS.regular,
     fontSize: FONTS.sizes.sm,
     color: COLORS.textSecondary,
-  },
-  arrow: {
-    fontSize: 24,
-    color: COLORS.textLight,
-  },
-  emptyText: {
-    fontSize: FONTS.sizes.md,
-    color: COLORS.textLight,
-    textAlign: 'center',
-    paddingVertical: SPACING.lg,
-  },
-  timeSlots: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: SPACING.sm,
+    alignItems: 'center',
   },
-  timeSlot: {
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-    borderRadius: RADIUS.full,
+  statsScrollContainer: {
+    marginBottom: SPACING.lg,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    paddingHorizontal: SPACING.md,
+    gap: SPACING.md,
+  },
+  statBox: {
+    flex: 1,
+    minWidth: 100,
+    backgroundColor: COLORS.surface,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: SPACING.md,
+    borderRadius: RADIUS.xl,
     borderWidth: 1,
-    borderColor: COLORS.border,
-    backgroundColor: COLORS.background,
+    borderColor: COLORS.divider,
+    ...SHADOWS.sm,
   },
-  timeSlotActive: {
-    borderColor: COLORS.primary,
-    backgroundColor: COLORS.primaryBg,
+  statNum: {
+    fontFamily: FONTS.bold,
+    fontSize: 24,
+    color: COLORS.textPrimary,
+    fontWeight: '700',
   },
-  timeSlotText: {
-    fontSize: FONTS.sizes.md,
+  statLabel: {
+    fontFamily: FONTS.medium,
+    fontSize: 10,
     color: COLORS.textSecondary,
+    marginBottom: 4,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  timeSlotTextActive: {
-    color: COLORS.primary,
+  skillsSection: {
+    paddingHorizontal: SPACING.lg,
+    marginBottom: SPACING.xl,
+  },
+  sectionTitle: {
+    fontFamily: FONTS.bold,
+    fontSize: FONTS.sizes.lg,
+    color: COLORS.textPrimary,
+    fontWeight: '700',
+    marginBottom: SPACING.md,
+  },
+  skillsList: {
+    flexDirection: 'column',
+    gap: SPACING.md,
+  },
+  tabContainer: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+    backgroundColor: COLORS.surface,
+    marginTop: SPACING.xs,
+    paddingHorizontal: SPACING.md,
+  },
+  tabBtn: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: SPACING.md,
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+  },
+  tabBtnActive: {
+    borderBottomColor: COLORS.primary,
+  },
+  tabText: {
+    fontFamily: FONTS.medium,
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.textSecondary,
     fontWeight: '600',
   },
-  logoutSection: {
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.xl,
+  tabTextActive: {
+    fontFamily: FONTS.bold,
+    color: COLORS.primary,
   },
+  tabContent: {
+    paddingTop: SPACING.lg,
+  },
+  placeholderContent: {
+    padding: SPACING.xl,
+    alignItems: 'center',
+  },
+  placeholderText: {
+    fontFamily: FONTS.regular,
+    color: COLORS.textSecondary,
+    fontSize: FONTS.sizes.md,
+  }
 });

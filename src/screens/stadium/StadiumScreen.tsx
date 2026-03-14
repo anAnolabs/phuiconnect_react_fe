@@ -8,11 +8,12 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Platform,
-  Linking,
+  ImageBackground,
 } from 'react-native';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../../constants/theme';
-import { Avatar, Badge, Card, Button, Rating, EmptyState } from '../../components/ui';
+import Header from '../../components/Header';
+import { Rating } from '../../components/ui';
+import Icon from '../../components/Icon';
 import { MOCK_STADIUMS } from '../../data/mockData';
 
 interface StadiumScreenProps {
@@ -20,149 +21,77 @@ interface StadiumScreenProps {
 }
 
 export default function StadiumScreen({ onNavigate }: StadiumScreenProps) {
-  const [selectedDistrict, setSelectedDistrict] = useState<string>('all');
-  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
-
-  const districts = ['all', ...Array.from(new Set(MOCK_STADIUMS.map(s => s.district)))];
-
-  const filteredStadiums = MOCK_STADIUMS.filter(s => {
-    if (selectedDistrict !== 'all' && s.district !== selectedDistrict) return false;
-    return true;
-  });
-
-  const openGoogleMaps = (lat: number, lng: number, name: string) => {
-    const url = Platform.OS === 'web'
-      ? `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
-      : `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-    Linking.openURL(url).catch(() => {});
-  };
+  const [activeFilter, setActiveFilter] = useState('Location');
+  const filters = ['Location', 'Date', 'Grass Type', 'Format (5/7/11)', 'Price'];
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View>
-          <Text style={styles.headerTitle}>🏟️ Tìm sân bóng</Text>
-          <Text style={styles.headerSubtitle}>{MOCK_STADIUMS.length} sân trong khu vực</Text>
-        </View>
-        <TouchableOpacity
-          style={styles.viewToggle}
-          onPress={() => setViewMode(viewMode === 'list' ? 'map' : 'list')}>
-          <Text style={styles.viewToggleText}>
-            {viewMode === 'list' ? '🗺️ Bản đồ' : '📋 Danh sách'}
-          </Text>
-        </TouchableOpacity>
+      {/* Header with Search */}
+      <Header title="Sân bóng" showSearch={true} />
+
+      {/* Filter Pill Bar */}
+      <View style={styles.filterWrapper}>
+         <ScrollView
+           horizontal
+           showsHorizontalScrollIndicator={false}
+           contentContainerStyle={styles.filterScroll}>
+           {filters.map(f => (
+             <TouchableOpacity
+               key={f}
+               style={[styles.filterPill, activeFilter === f && styles.filterPillActive]}
+               onPress={() => setActiveFilter(f)}>
+               <Text style={[styles.filterPillText, activeFilter === f && styles.filterPillTextActive]}>
+                 {f}
+               </Text>
+             </TouchableOpacity>
+           ))}
+         </ScrollView>
       </View>
 
-      {/* District Filter */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.filterRow}>
-        {districts.map(d => (
-          <TouchableOpacity
-            key={d}
-            style={[styles.filterChip, selectedDistrict === d && styles.filterChipActive]}
-            onPress={() => setSelectedDistrict(d)}>
-            <Text style={[styles.filterChipText, selectedDistrict === d && styles.filterChipTextActive]}>
-              {d === 'all' ? '📍 Tất cả' : d}
-            </Text>
-          </TouchableOpacity>
+      {/* Field List Container */}
+      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+        {MOCK_STADIUMS.map(stadium => (
+          <View key={stadium.id} style={styles.card}>
+             
+             {/* Main Image */}
+             <ImageBackground 
+                source={{ uri: (stadium as any).image || 'https://images.unsplash.com/photo-1459865264687-595d652de67e?w=800&q=80' }}
+                style={styles.cardImage}
+                imageStyle={styles.cardImageInner}
+             />
+
+             {/* Info Section */}
+             <View style={styles.infoContainer}>
+                <View style={styles.titleRow}>
+                   <Text style={styles.stadiumName}>{stadium.name}</Text>
+                   <View style={styles.ratingBox}>
+                      <Text style={styles.ratingText}>⭐ {stadium.rating}</Text>
+                   </View>
+                </View>
+                
+                <Text style={styles.metaRow}>
+                   {stadium.district} • {stadium.formats.join('/')} • {(stadium.price / 1000).toFixed(0)}k/trận
+                </Text>
+
+                {/* Available Time Slots Carousel */}
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.slotsScroll}>
+                   {['18:00', '19:30', '21:00'].map((time, idx) => (
+                      <TouchableOpacity key={idx} style={styles.slotPill}>
+                         <Text style={styles.slotText}>{time}</Text>
+                      </TouchableOpacity>
+                   ))}
+                </ScrollView>
+
+                {/* Full Width Button */}
+                <TouchableOpacity style={styles.bookBtn}>
+                   <Text style={styles.bookBtnText}>Đặt Sân Ngay</Text>
+                </TouchableOpacity>
+             </View>
+          </View>
         ))}
+        <View style={{ height: 100 }} />
       </ScrollView>
 
-      {viewMode === 'map' ? (
-        /* Map View (placeholder) */
-        <View style={styles.mapContainer}>
-          <View style={styles.mapPlaceholder}>
-            <Text style={styles.mapIcon}>🗺️</Text>
-            <Text style={styles.mapTitle}>Bản đồ sân bóng</Text>
-            <Text style={styles.mapSubtitle}>
-              Tích hợp Google Maps API để hiển thị{'\n'}
-              vị trí sân bóng trên bản đồ
-            </Text>
-            {/* Simple dot map */}
-            <View style={styles.dotMap}>
-              {filteredStadiums.map(s => (
-                <TouchableOpacity
-                  key={s.id}
-                  style={[styles.mapDot, {
-                    left: `${((s.lng - 106.65) / 0.15) * 100}%`,
-                    top: `${((10.87 - s.lat) / 0.17) * 100}%`,
-                  }]}
-                  onPress={() => openGoogleMaps(s.lat, s.lng, s.name)}>
-                  <Text style={styles.dotEmoji}>📍</Text>
-                  <Text style={styles.dotLabel}>{s.name.split(' ').slice(1).join(' ')}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        </View>
-      ) : (
-        /* List View */
-        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-          {filteredStadiums.length === 0 ? (
-            <EmptyState icon="🏟️" title="Không tìm thấy sân" subtitle="Thử chọn quận khác" />
-          ) : (
-            filteredStadiums.map(stadium => (
-              <Card key={stadium.id} style={styles.stadiumCard}>
-                {/* Image placeholder */}
-                <View style={styles.stadiumImage}>
-                  <Text style={styles.stadiumImageIcon}>🏟️</Text>
-                </View>
-
-                {/* Info */}
-                <View style={styles.stadiumContent}>
-                  <View style={styles.stadiumHeader}>
-                    <View style={{ flex: 1 }}>
-                      <Text style={styles.stadiumName}>{stadium.name}</Text>
-                      <Text style={styles.stadiumAddress}>{stadium.address}</Text>
-                    </View>
-                    <View style={styles.priceTag}>
-                      <Text style={styles.priceValue}>{(stadium.price / 1000).toFixed(0)}k</Text>
-                      <Text style={styles.priceUnit}>/trận</Text>
-                    </View>
-                  </View>
-
-                  {/* Rating & Formats */}
-                  <View style={styles.stadiumMeta}>
-                    <Rating rating={stadium.rating} size={14} />
-                    <Text style={styles.reviewCount}>({stadium.reviewCount})</Text>
-                    <View style={styles.formatTags}>
-                      {stadium.formats.map(f => (
-                        <Badge key={f} text={f} color={COLORS.accent} />
-                      ))}
-                    </View>
-                  </View>
-
-                  {/* Actions */}
-                  <View style={styles.stadiumActions}>
-                    <Button
-                      title="📞 Gọi"
-                      onPress={() => Linking.openURL(`tel:${stadium.phone}`).catch(() => {})}
-                      variant="outline"
-                      size="sm"
-                    />
-                    <Button
-                      title="🗺️ Chỉ đường"
-                      onPress={() => openGoogleMaps(stadium.lat, stadium.lng, stadium.name)}
-                      variant="outline"
-                      size="sm"
-                    />
-                    <Button
-                      title="📋 Đặt sân"
-                      onPress={() => {}}
-                      variant="primary"
-                      size="sm"
-                    />
-                  </View>
-                </View>
-              </Card>
-            ))
-          )}
-          <View style={{ height: 100 }} />
-        </ScrollView>
-      )}
     </View>
   );
 }
@@ -172,186 +101,119 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: Platform.OS === 'web' ? 20 : 56,
-    paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.lg,
-    backgroundColor: COLORS.primary,
-  },
-  headerTitle: {
-    fontSize: FONTS.sizes.xxl,
-    fontWeight: '700',
-    color: COLORS.textWhite,
-  },
-  headerSubtitle: {
-    fontSize: FONTS.sizes.sm,
-    color: '#D1FAE5',
-    marginTop: 2,
-  },
-  viewToggle: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.sm,
-    borderRadius: RADIUS.full,
-  },
-  viewToggleText: {
-    color: COLORS.textWhite,
-    fontWeight: '600',
-    fontSize: FONTS.sizes.sm,
-  },
-  filterRow: {
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.md,
-    gap: SPACING.sm,
+  filterWrapper: {
     backgroundColor: COLORS.surface,
+    paddingVertical: SPACING.md,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
   },
-  filterChip: {
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 6,
+  filterScroll: {
+    paddingHorizontal: SPACING.xl,
+    gap: SPACING.sm,
+  },
+  filterPill: {
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: 8,
     borderRadius: RADIUS.full,
+    backgroundColor: COLORS.background,
     borderWidth: 1,
     borderColor: COLORS.border,
-    backgroundColor: COLORS.background,
   },
-  filterChipActive: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
+  filterPillActive: {
+    backgroundColor: COLORS.primaryBg,
+    borderColor: COLORS.primaryDark,
   },
-  filterChipText: {
+  filterPillText: {
+    fontFamily: FONTS.medium,
     fontSize: FONTS.sizes.sm,
     color: COLORS.textSecondary,
-    fontWeight: '500',
   },
-  filterChipTextActive: {
-    color: COLORS.textWhite,
+  filterPillTextActive: {
+    fontFamily: FONTS.bold,
+    color: COLORS.primaryDark,
   },
   scroll: {
     flex: 1,
+    paddingTop: SPACING.md,
   },
-  // Map
-  mapContainer: {
-    flex: 1,
-    padding: SPACING.xl,
-  },
-  mapPlaceholder: {
-    flex: 1,
-    backgroundColor: '#E8F5E9',
-    borderRadius: RADIUS.xl,
-    padding: SPACING.xxl,
-    alignItems: 'center',
-  },
-  mapIcon: {
-    fontSize: 48,
-    marginBottom: SPACING.md,
-  },
-  mapTitle: {
-    fontSize: FONTS.sizes.xl,
-    fontWeight: '700',
-    color: COLORS.textPrimary,
-    marginBottom: SPACING.xs,
-  },
-  mapSubtitle: {
-    fontSize: FONTS.sizes.md,
-    color: COLORS.textSecondary,
-    textAlign: 'center',
-    marginBottom: SPACING.xl,
-  },
-  dotMap: {
-    width: '100%',
-    height: 250,
-    backgroundColor: '#C8E6C9',
+  card: {
+    backgroundColor: COLORS.surface,
+    marginHorizontal: SPACING.md,
+    marginBottom: SPACING.lg,
     borderRadius: RADIUS.lg,
-    position: 'relative',
+    borderWidth: 1,
+    borderColor: COLORS.divider,
     overflow: 'hidden',
   },
-  mapDot: {
-    position: 'absolute',
-    alignItems: 'center',
+  cardImage: {
+    width: '100%',
+    height: 180,
   },
-  dotEmoji: {
-    fontSize: 20,
+  cardImageInner: {
+    borderTopLeftRadius: RADIUS.lg,
+    borderTopRightRadius: RADIUS.lg,
   },
-  dotLabel: {
-    fontSize: 9,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-    backgroundColor: 'rgba(255,255,255,0.8)',
-    paddingHorizontal: 4,
-    borderRadius: 4,
-  },
-  // Stadium Card
-  stadiumCard: {
-    marginHorizontal: SPACING.xl,
-    marginTop: SPACING.md,
-    padding: 0,
-    overflow: 'hidden',
-  },
-  stadiumImage: {
-    height: 120,
-    backgroundColor: '#E8F5E9',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  stadiumImageIcon: {
-    fontSize: 48,
-  },
-  stadiumContent: {
+  infoContainer: {
     padding: SPACING.lg,
   },
-  stadiumHeader: {
+  titleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: SPACING.sm,
+    alignItems: 'center',
+    marginBottom: 4,
   },
   stadiumName: {
+    fontFamily: FONTS.bold,
     fontSize: FONTS.sizes.lg,
-    fontWeight: '700',
     color: COLORS.textPrimary,
-    marginBottom: 2,
+    flex: 1,
   },
-  stadiumAddress: {
-    fontSize: FONTS.sizes.sm,
-    color: COLORS.textSecondary,
-  },
-  priceTag: {
-    backgroundColor: COLORS.primaryBg,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: SPACING.xs,
-    borderRadius: RADIUS.md,
+  ratingBox: {
+    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: COLORS.primaryBg,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: RADIUS.full,
   },
-  priceValue: {
-    fontSize: FONTS.sizes.lg,
-    fontWeight: '800',
-    color: COLORS.primary,
-  },
-  priceUnit: {
-    fontSize: FONTS.sizes.xs,
+  ratingText: {
+    fontFamily: FONTS.bold,
+    fontSize: FONTS.sizes.sm,
     color: COLORS.primaryDark,
   },
-  stadiumMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: SPACING.md,
-    gap: 6,
-  },
-  reviewCount: {
+  metaRow: {
+    fontFamily: FONTS.regular,
     fontSize: FONTS.sizes.sm,
-    color: COLORS.textLight,
+    color: COLORS.textSecondary,
+    marginBottom: SPACING.md,
   },
-  formatTags: {
-    flexDirection: 'row',
-    gap: 4,
-    marginLeft: 'auto',
+  slotsScroll: {
+    marginBottom: SPACING.md,
   },
-  stadiumActions: {
-    flexDirection: 'row',
-    gap: SPACING.sm,
+  slotPill: {
+    paddingHorizontal: SPACING.md,
+    paddingVertical: 6,
+    borderWidth: 1,
+    borderColor: COLORS.divider,
+    borderRadius: RADIUS.sm,
+    marginRight: SPACING.sm,
+    backgroundColor: '#FAFAFA',
   },
+  slotText: {
+    fontFamily: FONTS.medium,
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.textPrimary,
+  },
+  bookBtn: {
+    backgroundColor: COLORS.primary,
+    paddingVertical: SPACING.md,
+    borderRadius: RADIUS.md,
+    alignItems: 'center',
+    width: '100%',
+  },
+  bookBtnText: {
+    fontFamily: FONTS.bold,
+    fontSize: FONTS.sizes.md,
+    color: COLORS.white,
+  }
 });

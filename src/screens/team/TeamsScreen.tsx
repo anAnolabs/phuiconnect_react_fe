@@ -8,12 +8,15 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Platform,
+  ImageBackground,
 } from 'react-native';
 import { COLORS, FONTS, SPACING, RADIUS, SHADOWS, POSITIONS } from '../../constants/theme';
-import { Avatar, Badge, Card, Button, SectionHeader, EmptyState } from '../../components/ui';
-import { MOCK_TEAMS, MOCK_PLAYERS } from '../../data/mockData';
-import { TeamMember, MatchFormat } from '../../types';
+import { Card, EmptyState, Avatar, Badge } from '../../components/ui';
+import Header from '../../components/Header';
+import ActivityCard from '../../components/ActivityCard';
+import Icon from '../../components/Icon';
+import { MOCK_TEAMS, MOCK_PLAYERS, MOCK_FEED } from '../../data/mockData';
+import { TeamMember } from '../../types';
 
 interface TeamsScreenProps {
   onNavigate: (screen: string, params?: any) => void;
@@ -26,15 +29,8 @@ export default function TeamsScreen({ onNavigate }: TeamsScreenProps) {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>👥 Đội bóng</Text>
-        <TouchableOpacity style={styles.createBtn} onPress={() => onNavigate('CreateTeam')}>
-          <Text style={styles.createBtnText}>+ Tạo đội</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Tabs */}
+      <Header title="Đội bóng" />
+      
       <View style={styles.tabs}>
         {(['my', 'discover'] as const).map(tab => (
           <TouchableOpacity
@@ -75,12 +71,18 @@ export default function TeamsScreen({ onNavigate }: TeamsScreenProps) {
 function TeamCard({ team, onPress }: { team: typeof MOCK_TEAMS[0]; onPress: () => void }) {
   return (
     <Card onPress={onPress} style={styles.teamCard}>
-      <View style={styles.teamHeader}>
-        <Avatar name={team.name} size={52} />
+      <View style={styles.teamCardHeader}>
+         <View style={styles.teamAvatar}><Text style={styles.teamAvatarText}>{team.name.substring(0, 2).toUpperCase()}</Text></View>
         <View style={styles.teamInfo}>
-          <Text style={styles.teamName}>{team.name}</Text>
-          <Text style={styles.teamMeta}>📍 {team.district}, {team.city}</Text>
-          <Text style={styles.teamMeta}>🏟️ {team.homeStadium}</Text>
+          <Text style={styles.teamNameList}>{team.name}</Text>
+          <Text style={styles.teamMeta}>
+             <Icon name="location_on" size={14} color={COLORS.textSecondary} style={{ marginRight: 2 }} />
+             {team.district}, {team.city}
+          </Text>
+          <Text style={styles.teamMeta}>
+             <Icon name="stadium" size={14} color={COLORS.textSecondary} style={{ marginRight: 2 }} />
+             {team.homeStadium}
+          </Text>
         </View>
       </View>
       <View style={styles.teamStats}>
@@ -93,7 +95,11 @@ function TeamCard({ team, onPress }: { team: typeof MOCK_TEAMS[0]; onPress: () =
           <Text style={styles.teamStatLabel}>Level</Text>
         </View>
         <View style={styles.teamStat}>
-          <Badge text={team.ownerId === 'u1' ? 'Chủ đội' : 'Tham gia'} color={team.ownerId === 'u1' ? COLORS.primary : COLORS.accent} />
+           <View style={[styles.statusPill, { backgroundColor: team.ownerId === 'u1' ? COLORS.primaryBg : '#FDF2F8' }]}>
+              <Text style={[styles.statusPillText, { color: team.ownerId === 'u1' ? COLORS.primaryDark : '#DB2777' }]}>
+                 {team.ownerId === 'u1' ? 'Chủ đội' : 'Tham gia'}
+              </Text>
+           </View>
         </View>
       </View>
     </Card>
@@ -111,11 +117,11 @@ interface TeamDetailScreenProps {
 
 export function TeamDetailScreen({ teamId, onBack, onNavigate }: TeamDetailScreenProps) {
   const team = MOCK_TEAMS.find(t => t.id === teamId) || MOCK_TEAMS[0];
-  const isOwner = team.ownerId === 'u1';
-  const [selectedFormation, setSelectedFormation] = useState<MatchFormat>('7v7');
+  const [activeTab, setActiveTab] = useState('Feed');
+  const tabs = ['Feed', 'Thành viên', 'Lịch thi đấu'];
 
   // Mock members
-  const members: TeamMember[] = MOCK_PLAYERS.slice(0, 4).map((p, i) => ({
+  const members: TeamMember[] = MOCK_PLAYERS.map((p, i) => ({
     teamId: team.id,
     userId: p.userId,
     role: i === 0 ? 'owner' : i === 1 ? 'captain' : 'member',
@@ -125,129 +131,106 @@ export function TeamDetailScreen({ teamId, onBack, onNavigate }: TeamDetailScree
     avatar: '',
   }));
 
-  const tasks = [
-    { key: 'collect_money', icon: '💰', label: 'Thu tiền', assigned: 'Hoàng Sơn' },
-    { key: 'bring_ball', icon: '⚽', label: 'Mang bóng', assigned: 'Minh Tuấn' },
-    { key: 'book_stadium', icon: '🏟️', label: 'Đặt sân', assigned: 'Hoàng Sơn' },
-    { key: 'bring_jersey', icon: '👕', label: 'Mang áo', assigned: 'Văn Khang' },
-  ];
-
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.detailHeader}>
-        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Text style={styles.backText}>← Quay lại</Text>
-        </TouchableOpacity>
-        {isOwner && (
-          <TouchableOpacity>
-            <Text style={styles.editText}>⚙️ Quản lý</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      <Header showSearch={false} title={team.name} />
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        {/* Team Hero */}
-        <View style={styles.teamHero}>
-          <Avatar name={team.name} size={72} />
-          <Text style={styles.heroName}>{team.name}</Text>
-          <View style={styles.heroTags}>
-            <Badge text={`📍 ${team.district}`} color={COLORS.textSecondary} />
-            <Badge text={`Level ${team.level}`} color={COLORS.secondary} />
-          </View>
-          <Text style={styles.heroStadium}>🏟️ Sân nhà: {team.homeStadium}</Text>
+        {/* Hero Section */}
+        <ImageBackground 
+            source={{ uri: (team as any).banner || 'https://images.unsplash.com/photo-1518605368461-1e1e38ce8058?w=800&q=80' }} 
+            style={styles.heroBanner}
+            imageStyle={{ opacity: 0.8 }}
+        >
+          <TouchableOpacity style={styles.backBtnWrapper} onPress={onBack}>
+             <Text style={styles.backBtnText}>←</Text>
+          </TouchableOpacity>
+        </ImageBackground>
+
+        {/* Info overlapping banner */}
+        <View style={styles.teamHeroInfo}>
+           <View style={styles.heroAvatarWrapper}>
+              <Avatar name={team.name} size={64} />
+           </View>
+           <Text style={styles.heroTeamName}>{team.name}</Text>
+           <Text style={styles.heroLocation}>📍 {team.district}, {team.city}</Text>
         </View>
 
-        {/* Stats */}
-        <View style={styles.detailStats}>
-          <View style={styles.detailStat}>
-            <Text style={styles.detailStatValue}>{team.memberCount}</Text>
-            <Text style={styles.detailStatLabel}>Thành viên</Text>
+        {/* Overarching Stats (W/D/L) */}
+        <View style={styles.statsRow}>
+          <View style={styles.statBox}>
+            <Text style={styles.statNum}>{(team as any).stats?.wins || 0}</Text>
+            <Text style={styles.statLabel}>Thắng</Text>
           </View>
-          <View style={styles.detailStat}>
-            <Text style={styles.detailStatValue}>12</Text>
-            <Text style={styles.detailStatLabel}>Trận đấu</Text>
+          <View style={styles.statDivider} />
+          <View style={styles.statBox}>
+            <Text style={styles.statNum}>{(team as any).stats?.draws || 0}</Text>
+            <Text style={styles.statLabel}>Hòa</Text>
           </View>
-          <View style={styles.detailStat}>
-            <Text style={styles.detailStatValue}>8W - 2D - 2L</Text>
-            <Text style={styles.detailStatLabel}>Thành tích</Text>
+          <View style={styles.statDivider} />
+          <View style={styles.statBox}>
+            <Text style={styles.statNum}>{(team as any).stats?.losses || 0}</Text>
+            <Text style={styles.statLabel}>Thua</Text>
           </View>
         </View>
 
-        {/* Formation Selector */}
-        <Card style={styles.section}>
-          <Text style={styles.sectionTitle}>⚽ Đội hình</Text>
-          <View style={styles.formationPicker}>
-            {(['5v5', '7v7', '11v11'] as MatchFormat[]).map(f => (
-              <TouchableOpacity
-                key={f}
-                style={[styles.formationBtn, selectedFormation === f && styles.formationBtnActive]}
-                onPress={() => setSelectedFormation(f)}>
-                <Text style={[styles.formationBtnText, selectedFormation === f && styles.formationBtnTextActive]}>{f}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-          {/* Simple formation display */}
-          <View style={styles.pitch}>
-            <View style={styles.pitchBg}>
-              <Text style={styles.pitchLabel}>Sơ đồ {selectedFormation}</Text>
-              <View style={styles.pitchPlayers}>
-                {members.slice(0, parseInt(selectedFormation)).map((m, i) => (
-                  <View key={m.userId} style={styles.pitchPlayer}>
-                    <Avatar name={m.playerName} size={32} />
-                    <Text style={styles.pitchPlayerName}>{m.playerName.split(' ').pop()}</Text>
-                    <Badge text={m.position} color={COLORS.primary} />
-                  </View>
-                ))}
-              </View>
-            </View>
-          </View>
-        </Card>
+        {/* Action Buttons */}
+        <View style={styles.actionButtonsRow}>
+          <TouchableOpacity style={[styles.actionBtn, styles.primaryBtn]}>
+             <Text style={styles.primaryBtnText}>⚔️ Thách đấu</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.actionBtn, styles.secondaryBtn]}>
+             <Text style={styles.secondaryBtnText}>🙋 Chiêu mộ</Text>
+          </TouchableOpacity>
+        </View>
 
-        {/* Members */}
-        <Card style={styles.section}>
-          <View style={styles.sectionHeaderRow}>
-            <Text style={styles.sectionTitle}>👥 Thành viên</Text>
-            {isOwner && <Button title="+ Thêm" onPress={() => {}} variant="ghost" size="sm" />}
-          </View>
-          {members.map(member => (
-            <View key={member.userId} style={styles.memberItem}>
-              <Avatar name={member.playerName} size={40} />
-              <View style={styles.memberInfo}>
-                <Text style={styles.memberName}>{member.playerName}</Text>
-                <Text style={styles.memberRole}>
-                  {member.role === 'owner' ? '👑 Chủ đội' : member.role === 'captain' ? '©️ Đội trưởng' : '⚽ Thành viên'}
-                  {' · '}{POSITIONS[member.position]}
-                </Text>
-              </View>
-              <Badge text={member.position} color={COLORS.accent} />
-            </View>
+        {/* Tabs */}
+        <View style={styles.tabContainer}>
+          {tabs.map(tab => (
+            <TouchableOpacity 
+              key={tab} 
+              style={[styles.itemTabBtn, activeTab === tab && styles.itemTabBtnActive]}
+              onPress={() => setActiveTab(tab)}
+            >
+              <Text style={[styles.itemTabText, activeTab === tab && styles.itemTabTextActive]}>
+                {tab}
+              </Text>
+            </TouchableOpacity>
           ))}
-        </Card>
+        </View>
 
-        {/* Tasks */}
-        {isOwner && (
-          <Card style={styles.section}>
-            <Text style={styles.sectionTitle}>📋 Phân công</Text>
-            {tasks.map(task => (
-              <View key={task.key} style={styles.taskItem}>
-                <Text style={styles.taskIcon}>{task.icon}</Text>
-                <View style={styles.taskInfo}>
-                  <Text style={styles.taskLabel}>{task.label}</Text>
-                  <Text style={styles.taskAssigned}>{task.assigned}</Text>
-                </View>
-                <TouchableOpacity>
-                  <Text style={styles.taskEdit}>Đổi</Text>
-                </TouchableOpacity>
-              </View>
-            ))}
-          </Card>
-        )}
+        {/* Tab Content */}
+        <View style={styles.tabContent}>
+           {activeTab === 'Feed' && (
+             <>
+               {MOCK_FEED.map(activity => (
+                 <ActivityCard key={activity.id} activity={activity} />
+               ))}
+             </>
+           )}
+           
+           {activeTab === 'Thành viên' && (
+             <View style={styles.membersList}>
+               {members.map(member => (
+                 <View key={member.userId} style={styles.memberItem}>
+                   <Avatar name={member.playerName} size={40} />
+                   <View style={styles.memberInfo}>
+                     <Text style={styles.memberName}>{member.playerName}</Text>
+                     <Text style={styles.memberRole}>
+                       {member.role === 'owner' ? '👑 Chủ đội' : member.role === 'captain' ? '©️ Đội trưởng' : '⚽ Thành viên'}
+                     </Text>
+                   </View>
+                   <Badge text={POSITIONS[member.position] || member.position} color={COLORS.accent} />
+                 </View>
+               ))}
+             </View>
+           )}
 
-        {/* Actions */}
-        <View style={styles.actionSection}>
-          <Button title="⚔️ Tìm đối thủ" onPress={() => onNavigate('CreateMatch')} style={{ marginBottom: SPACING.sm }} />
-          <Button title="🙋 Tuyển thêm người" onPress={() => onNavigate('CreateFindPost')} variant="secondary" style={{ marginBottom: SPACING.sm }} />
+           {activeTab === 'Lịch thi đấu' && (
+             <View style={styles.placeholderContent}>
+                <Text style={styles.placeholderText}>Chưa có lịch thi đấu.</Text>
+             </View>
+           )}
         </View>
 
         <View style={{ height: 100 }} />
@@ -261,31 +244,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.background,
   },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingTop: Platform.OS === 'web' ? 20 : 56,
-    paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.lg,
-    backgroundColor: COLORS.primary,
+  scroll: {
+    flex: 1,
   },
-  headerTitle: {
-    fontSize: FONTS.sizes.xxl,
-    fontWeight: '700',
-    color: COLORS.textWhite,
-  },
-  createBtn: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: SPACING.lg,
-    paddingVertical: SPACING.sm,
-    borderRadius: RADIUS.full,
-  },
-  createBtnText: {
-    color: COLORS.textWhite,
-    fontWeight: '600',
-    fontSize: FONTS.sizes.md,
-  },
+  // List Screen Styles
   tabs: {
     flexDirection: 'row',
     backgroundColor: COLORS.surface,
@@ -304,20 +266,24 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.primary,
   },
   tabText: {
+    fontFamily: FONTS.medium,
     fontSize: FONTS.sizes.md,
-    fontWeight: '600',
     color: COLORS.textSecondary,
   },
   tabTextActive: {
+    fontFamily: FONTS.bold,
     color: COLORS.primary,
   },
-  scroll: {
-    flex: 1,
-  },
   teamCard: {
-    marginHorizontal: SPACING.xl,
+    marginHorizontal: SPACING.md,
+    marginTop: SPACING.md,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1,
+    borderColor: COLORS.divider,
+    shadowColor: 'transparent', // remove default card shadow
   },
-  teamHeader: {
+  teamCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: SPACING.md,
@@ -326,15 +292,34 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: SPACING.md,
   },
-  teamName: {
-    fontSize: FONTS.sizes.lg,
+  teamAvatar: {
+    width: 64,
+    height: 64,
+    borderRadius: RADIUS.full,
+    backgroundColor: COLORS.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#E2E8F0', // slate-200 equivalent
+  },
+  teamAvatarText: {
+    fontFamily: FONTS.bold,
+    color: COLORS.textSecondary,
+    fontSize: 20,
     fontWeight: '700',
+  },
+  teamNameList: {
+    fontFamily: FONTS.bold,
+    fontSize: FONTS.sizes.lg,
     color: COLORS.textPrimary,
   },
   teamMeta: {
+    fontFamily: FONTS.regular,
     fontSize: FONTS.sizes.sm,
     color: COLORS.textSecondary,
     marginTop: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   teamStats: {
     flexDirection: 'row',
@@ -348,148 +333,167 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   teamStatValue: {
+    fontFamily: FONTS.bold,
     fontSize: FONTS.sizes.lg,
-    fontWeight: '700',
     color: COLORS.primary,
   },
   teamStatLabel: {
-    fontSize: FONTS.sizes.xs,
+    fontFamily: FONTS.regular,
+    fontSize: 10,
     color: COLORS.textSecondary,
+    textTransform: 'uppercase',
   },
-  // Detail
-  detailHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  statusPill: {
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 4,
+    borderRadius: RADIUS.full,
+  },
+  statusPillText: {
+    fontFamily: FONTS.bold,
+    fontSize: 10,
+    textTransform: 'uppercase',
+    fontWeight: '700',
+  },
+
+  // Detail Screen Styles
+  heroBanner: {
+    width: '100%',
+    height: 160,
+    backgroundColor: COLORS.textPrimary,
+  },
+  backBtnWrapper: {
+    position: 'absolute',
+    top: SPACING.md,
+    left: SPACING.md,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: RADIUS.full,
+    width: 36,
+    height: 36,
     alignItems: 'center',
-    paddingTop: Platform.OS === 'web' ? 20 : 56,
-    paddingHorizontal: SPACING.xl,
-    paddingBottom: SPACING.md,
-    backgroundColor: COLORS.primary,
+    justifyContent: 'center',
   },
-  backBtn: {},
-  backText: {
-    fontSize: FONTS.sizes.md,
-    color: COLORS.textWhite,
-    fontWeight: '600',
+  backBtnText: {
+    color: COLORS.white,
+    fontSize: 20,
+    fontFamily: FONTS.bold,
   },
-  editText: {
-    fontSize: FONTS.sizes.md,
-    color: '#D1FAE5',
-    fontWeight: '600',
-  },
-  teamHero: {
+  teamHeroInfo: {
     alignItems: 'center',
-    backgroundColor: COLORS.primary,
-    paddingBottom: SPACING.xxl,
+    marginTop: -32,
+    marginBottom: SPACING.lg,
   },
-  heroName: {
-    fontSize: FONTS.sizes.xxl,
-    fontWeight: '800',
-    color: COLORS.textWhite,
-    marginTop: SPACING.sm,
+  heroAvatarWrapper: {
+    borderWidth: 4,
+    borderColor: COLORS.background,
+    borderRadius: RADIUS.full,
+    marginBottom: SPACING.sm,
+    backgroundColor: COLORS.surface,
   },
-  heroTags: {
-    flexDirection: 'row',
-    gap: SPACING.sm,
-    marginTop: SPACING.sm,
+  heroTeamName: {
+    fontFamily: FONTS.bold,
+    fontSize: FONTS.sizes.xl,
+    color: COLORS.textPrimary,
   },
-  heroStadium: {
-    fontSize: FONTS.sizes.md,
-    color: '#D1FAE5',
-    marginTop: SPACING.sm,
+  heroLocation: {
+    fontFamily: FONTS.medium,
+    fontSize: FONTS.sizes.sm,
+    color: COLORS.textSecondary,
+    marginTop: 4,
   },
-  detailStats: {
+  // Stats Row
+  statsRow: {
     flexDirection: 'row',
     backgroundColor: COLORS.surface,
     marginHorizontal: SPACING.xl,
-    marginTop: -16,
     borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
-    justifyContent: 'space-around',
-    ...SHADOWS.md,
-    marginBottom: SPACING.md,
+    paddingVertical: SPACING.md,
+    ...SHADOWS.sm,
+    marginBottom: SPACING.lg,
   },
-  detailStat: {
+  statBox: {
+    flex: 1,
     alignItems: 'center',
   },
-  detailStatValue: {
-    fontSize: FONTS.sizes.lg,
-    fontWeight: '700',
-    color: COLORS.primary,
+  statNum: {
+    fontFamily: FONTS.bold,
+    fontSize: FONTS.sizes.xl,
+    color: COLORS.textPrimary,
   },
-  detailStatLabel: {
+  statLabel: {
+    fontFamily: FONTS.medium,
     fontSize: FONTS.sizes.xs,
     color: COLORS.textSecondary,
-    marginTop: 2,
+    marginTop: 4,
   },
-  section: {
-    marginHorizontal: SPACING.xl,
+  statDivider: {
+    width: 1,
+    backgroundColor: COLORS.divider,
   },
-  sectionTitle: {
-    fontSize: FONTS.sizes.lg,
-    fontWeight: '700',
-    color: COLORS.textPrimary,
-    marginBottom: SPACING.md,
-  },
-  sectionHeaderRow: {
+  // Actions
+  actionButtonsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    paddingHorizontal: SPACING.xl,
+    gap: SPACING.md,
+    marginBottom: SPACING.lg,
   },
-  formationPicker: {
-    flexDirection: 'row',
-    gap: SPACING.sm,
-    marginBottom: SPACING.md,
-  },
-  formationBtn: {
-    paddingHorizontal: SPACING.lg,
+  actionBtn: {
+    flex: 1,
     paddingVertical: SPACING.sm,
-    borderRadius: RADIUS.full,
-    borderWidth: 1,
-    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  formationBtnActive: {
+  primaryBtn: {
     backgroundColor: COLORS.primary,
+  },
+  primaryBtnText: {
+    color: COLORS.white,
+    fontFamily: FONTS.bold,
+    fontSize: FONTS.sizes.md,
+  },
+  secondaryBtn: {
+    backgroundColor: COLORS.primaryBg,
+    borderWidth: 1,
     borderColor: COLORS.primary,
   },
-  formationBtnText: {
+  secondaryBtnText: {
+    color: COLORS.primaryDark,
+    fontFamily: FONTS.bold,
     fontSize: FONTS.sizes.md,
-    fontWeight: '600',
+  },
+  // Tabs
+  tabContainer: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+    backgroundColor: COLORS.surface,
+  },
+  itemTabBtn: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: SPACING.md,
+    borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+  },
+  itemTabBtnActive: {
+    borderBottomColor: COLORS.primary,
+  },
+  itemTabText: {
+    fontFamily: FONTS.medium,
+    fontSize: FONTS.sizes.md,
     color: COLORS.textSecondary,
   },
-  formationBtnTextActive: {
-    color: COLORS.textWhite,
+  itemTabTextActive: {
+    fontFamily: FONTS.bold,
+    color: COLORS.primary,
   },
-  pitch: {
-    marginTop: SPACING.sm,
+  tabContent: {
+    paddingTop: SPACING.lg,
   },
-  pitchBg: {
-    backgroundColor: '#1B5E20',
-    borderRadius: RADIUS.lg,
-    padding: SPACING.xl,
-    minHeight: 200,
-    alignItems: 'center',
-  },
-  pitchLabel: {
-    color: '#A5D6A7',
-    fontSize: FONTS.sizes.sm,
-    fontWeight: '600',
-    marginBottom: SPACING.md,
-  },
-  pitchPlayers: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
-    gap: SPACING.lg,
-  },
-  pitchPlayer: {
-    alignItems: 'center',
-    gap: 2,
-  },
-  pitchPlayerName: {
-    fontSize: FONTS.sizes.xs,
-    color: COLORS.textWhite,
-    fontWeight: '600',
+  membersList: {
+    backgroundColor: COLORS.surface,
+    paddingHorizontal: SPACING.xl,
+    paddingVertical: SPACING.md,
   },
   memberItem: {
     flexDirection: 'row',
@@ -503,44 +507,23 @@ const styles = StyleSheet.create({
     marginLeft: SPACING.md,
   },
   memberName: {
+    fontFamily: FONTS.bold,
     fontSize: FONTS.sizes.md,
-    fontWeight: '600',
     color: COLORS.textPrimary,
   },
   memberRole: {
+    fontFamily: FONTS.regular,
     fontSize: FONTS.sizes.sm,
     color: COLORS.textSecondary,
+    marginTop: 2,
   },
-  taskItem: {
-    flexDirection: 'row',
+  placeholderContent: {
+    padding: SPACING.xl,
     alignItems: 'center',
-    paddingVertical: SPACING.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.divider,
   },
-  taskIcon: {
-    fontSize: 24,
-    marginRight: SPACING.md,
-  },
-  taskInfo: {
-    flex: 1,
-  },
-  taskLabel: {
-    fontSize: FONTS.sizes.md,
-    fontWeight: '600',
-    color: COLORS.textPrimary,
-  },
-  taskAssigned: {
-    fontSize: FONTS.sizes.sm,
+  placeholderText: {
+    fontFamily: FONTS.regular,
     color: COLORS.textSecondary,
-  },
-  taskEdit: {
-    fontSize: FONTS.sizes.sm,
-    color: COLORS.primary,
-    fontWeight: '600',
-  },
-  actionSection: {
-    paddingHorizontal: SPACING.xl,
-    paddingVertical: SPACING.lg,
-  },
+    fontSize: FONTS.sizes.md,
+  }
 });

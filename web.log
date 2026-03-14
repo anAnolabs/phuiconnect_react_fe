@@ -1,0 +1,27 @@
+
+> PhuiConnect2@0.0.1 web
+> webpack serve --mode development --config webpack.config.js
+
+/Volumes/anlampardX/app/phuiconnect/frontend/phuiconnect/node_modules/webpack-dev-server/lib/Server.js:2654
+        throw error;
+        ^
+
+Error: listen EADDRINUSE: address already in use :::3000
+    at Server.setupListenHandle [as _listen2] (node:net:2008:16)
+    at listenInCluster (node:net:2065:12)
+    at Server.listen (node:net:2170:7)
+    at READ_WRITE (/Volumes/anlampardX/app/phuiconnect/frontend/phuiconnect/node_modules/webpack-dev-server/lib/Server.js:3481:23)
+    at new Promise (<anonymous>)
+    at Server.start (/Volumes/anlampardX/app/phuiconnect/frontend/phuiconnect/node_modules/webpack-dev-server/lib/Server.js:3479:7)
+    at async Command.<anonymous> (/Volumes/anlampardX/app/phuiconnect/frontend/phuiconnect/node_modules/@webpack-cli/serve/lib/index.js:161:21)
+    at async Command.parseAsync (/Volumes/anlampardX/app/phuiconnect/frontend/phuiconnect/node_modules/webpack-cli/node_modules/commander/lib/command.js:1092:5)
+    at async Command.<anonymous> (/Volumes/anlampardX/app/phuiconnect/frontend/phuiconnect/node_modules/webpack-cli/lib/webpack-cli.js:1340:13)
+    at async Command.parseAsync (/Volumes/anlampardX/app/phuiconnect/frontend/phuiconnect/node_modules/webpack-cli/node_modules/commander/lib/command.js:1092:5) {
+  code: 'EADDRINUSE',
+  errno: -48,
+  syscall: 'listen',
+  address: '::',
+  port: 3000
+}
+
+Node.js v25.8.1

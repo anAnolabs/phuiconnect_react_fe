@@ -54,6 +54,7 @@ module.exports = {
     alias: {
       'react-native$': 'react-native-web',
       'react-native-safe-area-context': 'react-native-web',
+      '@react-native-google-signin/google-signin': path.resolve(appDirectory, 'src/stubs/google-signin.stub.js'),
     },
     extensions: [
       '.web.tsx',

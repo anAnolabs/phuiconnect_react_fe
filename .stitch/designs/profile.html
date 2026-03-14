@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Player Profile Activity Tab Variant 1</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#2fc171",
+              "background-light": "#f5f6f7",
+              "background-dark": "#131f18",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased min-h-screen flex flex-col">
+<!-- Header -->
+<div class="flex items-center p-4 pb-2 justify-between sticky top-0 bg-background-light dark:bg-background-dark z-10 border-b border-slate-200 dark:border-slate-800">
+<h2 class="text-primary text-xl font-bold leading-tight flex-1">PhuiConnect</h2>
+<div class="flex items-center justify-end">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+<span class="material-symbols-outlined text-[24px]">notifications</span>
+</button>
+</div>
+</div>
+<!-- Search Bar -->
+<div class="px-4 py-3 bg-background-light dark:bg-background-dark">
+<label class="flex flex-col w-full h-10 relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="form-input w-full h-full rounded-full border-none bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary pl-10 pr-4 text-sm font-medium placeholder:text-slate-500" placeholder="Search players, teams..." type="text"/>
+</label>
+</div>
+<main class="flex-1 overflow-y-auto pb-20">
+<!-- Player Card -->
+<div class="flex flex-col items-center pt-6 pb-4 px-4">
+<div class="w-24 h-24 rounded-full bg-slate-300 dark:bg-slate-700 bg-cover bg-center shadow-md mb-3" data-alt="Avatar of amateur football player" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBoF1EfU2KuNc2b8s0_iqiZ2uVSkYmPpjyxVXPZ5pof6FNXVOWUWqty6q_jf-ZOeMpJygoHyvhKsDgcqDeUSLQ9_5kcKIVcbRd8cU49cUcacWNFdyH9XRf7QNZuY9H8Ax1-NqE0t6wC7lvvZOGVk14HKmWSjCI6jmOdEClHia1wTGR2Y66DdrYQFjXrvMx55sQL458QIL0A0htOqa2IjtdFHImTooMr3fnn2GXhbalKuYbpiZnsTT_HETdmCf9H-dZnv3mZrXVvud0');"></div>
+<h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100">Nguyen Van A</h1>
+<p class="text-primary font-medium mt-1">Midfielder</p>
+<div class="flex items-center text-slate-500 dark:text-slate-400 mt-1 text-sm">
+<span class="material-symbols-outlined text-[16px] mr-1">location_on</span>
+                Hanoi
+            </div>
+</div>
+<!-- Stats Section -->
+<div class="flex gap-3 px-4 py-4 overflow-x-auto snap-x hide-scrollbar">
+<div class="flex-1 min-w-[100px] bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center snap-center">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Goals</p>
+<p class="text-2xl font-bold text-slate-900 dark:text-slate-100">12</p>
+</div>
+<div class="flex-1 min-w-[100px] bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center snap-center">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Assists</p>
+<p class="text-2xl font-bold text-slate-900 dark:text-slate-100">24</p>
+</div>
+<div class="flex-1 min-w-[100px] bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-100 dark:border-slate-800 flex flex-col items-center justify-center snap-center">
+<p class="text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider mb-1 text-center leading-tight">Matches<br/>Played</p>
+<p class="text-2xl font-bold text-slate-900 dark:text-slate-100 mt-1">45</p>
+</div>
+</div>
+<!-- Skills Section -->
+<div class="px-4 py-4">
+<h3 class="text-lg font-bold text-slate-900 dark:text-slate-100 mb-4">Skills</h3>
+<div class="space-y-3">
+<!-- Skill: Speed -->
+<div>
+<div class="flex justify-between text-sm mb-1 font-medium text-slate-700 dark:text-slate-300">
+<span>Speed</span>
+<span>85</span>
+</div>
+<div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+<!-- Skill: Passing -->
+<div>
+<div class="flex justify-between text-sm mb-1 font-medium text-slate-700 dark:text-slate-300">
+<span>Passing</span>
+<span>78</span>
+</div>
+<div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 78%"></div>
+</div>
+</div>
+<!-- Skill: Shooting -->
+<div>
+<div class="flex justify-between text-sm mb-1 font-medium text-slate-700 dark:text-slate-300">
+<span>Shooting</span>
+<span>70</span>
+</div>
+<div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 70%"></div>
+</div>
+</div>
+<!-- Skill: Defense -->
+<div>
+<div class="flex justify-between text-sm mb-1 font-medium text-slate-700 dark:text-slate-300">
+<span>Defense</span>
+<span>65</span>
+</div>
+<div class="w-full bg-slate-200 dark:bg-slate-800 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 65%"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Tab Bar -->
+<div class="flex border-b border-slate-200 dark:border-slate-800 mt-2 px-4 sticky top-14 bg-background-light dark:bg-background-dark z-10">
+<button class="flex-1 py-3 text-sm font-semibold border-b-2 border-primary text-primary text-center">
+                Activity
+            </button>
+<button class="flex-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-center transition-colors">
+                Teams
+            </button>
+<button class="flex-1 py-3 text-sm font-semibold border-b-2 border-transparent text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 text-center transition-colors">
+                Highlights
+            </button>
+</div>
+<!-- Tab Content: Activity -->
+<div class="p-4 space-y-4">
+<!-- Activity Card -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="flex justify-between items-center mb-3">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">sports_soccer</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-slate-100">Friendly Match</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">2 days ago</p>
+</div>
+</div>
+<span class="px-2 py-1 bg-primary/10 text-primary text-xs font-bold rounded">WIN</span>
+</div>
+<div class="flex items-center justify-between mb-4 px-2">
+<div class="text-center w-1/3">
+<p class="font-bold text-sm truncate">Hanoi FC</p>
+</div>
+<div class="text-center w-1/3">
+<p class="text-2xl font-bold">3 - 1</p>
+</div>
+<div class="text-center w-1/3">
+<p class="font-bold text-sm truncate text-slate-500">Saigon Utd</p>
+</div>
+</div>
+<div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between text-sm">
+<div class="flex gap-4">
+<span class="flex items-center gap-1 text-slate-600 dark:text-slate-400"><span class="material-symbols-outlined text-[16px] text-primary">sports_score</span> 1 Goal</span>
+<span class="flex items-center gap-1 text-slate-600 dark:text-slate-400"><span class="material-symbols-outlined text-[16px] text-primary">assist_walker</span> 1 Assist</span>
+</div>
+</div>
+</div>
+<!-- Activity Card 2 -->
+<div class="bg-white dark:bg-slate-900 rounded-xl p-4 shadow-sm border border-slate-100 dark:border-slate-800">
+<div class="flex justify-between items-center mb-3">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">emoji_events</span>
+</div>
+<div>
+<p class="text-sm font-bold text-slate-900 dark:text-slate-100">Local Tournament</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">1 week ago</p>
+</div>
+</div>
+<span class="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold rounded">DRAW</span>
+</div>
+<div class="flex items-center justify-between mb-4 px-2">
+<div class="text-center w-1/3">
+<p class="font-bold text-sm truncate">Hanoi FC</p>
+</div>
+<div class="text-center w-1/3">
+<p class="text-2xl font-bold">2 - 2</p>
+</div>
+<div class="text-center w-1/3">
+<p class="font-bold text-sm truncate text-slate-500">Da Nang City</p>
+</div>
+</div>
+<div class="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-between text-sm">
+<div class="flex gap-4">
+<span class="flex items-center gap-1 text-slate-600 dark:text-slate-400"><span class="material-symbols-outlined text-[16px] text-primary">assist_walker</span> 2 Assists</span>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<div class="fixed bottom-0 left-0 right-0 flex justify-around items-center bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 pb-safe pt-2 px-2 z-50">
+<a class="flex flex-col items-center p-2 text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<span class="text-[10px] mt-1 font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center p-2 text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">search</span>
+<span class="text-[10px] mt-1 font-medium">Search</span>
+</a>
+<a class="flex flex-col items-center p-2 text-slate-500 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">group</span>
+<span class="text-[10px] mt-1 font-medium">Teams</span>
+</a>
+<a class="flex flex-col items-center p-2 text-primary" href="#">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">person</span>
+<span class="text-[10px] mt-1 font-medium">Profile</span>
+</a>
+</div>
+<style>
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom, 16px);
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</body></html>

@@ -159,6 +159,37 @@ export const authService = {
   },
 
   /**
+   * Sign in as Guest
+   */
+  async signInAsGuest(): Promise<AuthResult> {
+    try {
+      const guestUser: AuthUser = {
+        id: 'guest', 
+        name: 'Khách', 
+        role: 'guest',
+        email: '',
+        avatar: '',
+        phone: '',
+        location: '',
+        loginMethod: 'guest',
+        createdAt: new Date().toISOString()
+      } as any;
+      
+      const storage = await getStorage();
+      await storage.setItem(TOKEN_KEY, 'guest-token');
+      await storage.setItem(USER_KEY, JSON.stringify(guestUser));
+
+      return {
+        success: true,
+        user: guestUser,
+        token: 'guest-token',
+      };
+    } catch (error: any) {
+      return { success: false, error: error.message };
+    }
+  },
+
+  /**
    * Try to restore session from stored token
    * Called on app start
    */

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PhuiConnect - Football Fields Marketplace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#2fc173",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#131f19",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen pb-20">
+<!-- Header -->
+<div class="flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between sticky top-0 z-10">
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] flex-1">PhuiConnect</h2>
+<div class="flex w-12 items-center justify-end">
+<button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-12 bg-transparent text-slate-900 dark:text-slate-100 gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</div>
+</div>
+<!-- Search Bar -->
+<div class="px-4 py-3 sticky top-[60px] bg-background-light dark:bg-background-dark z-10">
+<label class="flex flex-col min-w-40 h-12 w-full">
+<div class="flex w-full flex-1 items-stretch rounded-xl h-full shadow-sm">
+<div class="text-primary flex border-none bg-white dark:bg-slate-800 items-center justify-center pl-4 rounded-l-xl border-r-0">
+<span class="material-symbols-outlined">search</span>
+</div>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-slate-900 dark:text-slate-100 focus:outline-0 focus:ring-0 border-none bg-white dark:bg-slate-800 focus:border-none h-full placeholder:text-slate-500 dark:placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" placeholder="Search players, teams, or fields" value=""/>
+</div>
+</label>
+</div>
+<!-- Filter Bar -->
+<div class="flex gap-3 p-3 overflow-x-auto no-scrollbar sticky top-[116px] bg-background-light dark:bg-background-dark z-10 shadow-sm mb-2">
+<button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-slate-800 shadow-sm pl-4 pr-2 border border-slate-200 dark:border-slate-700">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-medium leading-normal">Location</p>
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400 text-xl">expand_more</span>
+</button>
+<button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-slate-800 shadow-sm pl-4 pr-2 border border-slate-200 dark:border-slate-700">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-medium leading-normal">Date</p>
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400 text-xl">expand_more</span>
+</button>
+<button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-slate-800 shadow-sm pl-4 pr-2 border border-slate-200 dark:border-slate-700">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-medium leading-normal">Grass Type</p>
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400 text-xl">expand_more</span>
+</button>
+<button class="flex h-8 shrink-0 items-center justify-center gap-x-2 rounded-full bg-white dark:bg-slate-800 shadow-sm pl-4 pr-2 border border-slate-200 dark:border-slate-700">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-medium leading-normal">Format (5/7/11)</p>
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400 text-xl">expand_more</span>
+</button>
+</div>
+<!-- Main Content: Field Cards -->
+<div class="px-4 space-y-6 @container">
+<!-- Field Card 1 -->
+<div class="flex flex-col items-stretch justify-start rounded-xl shadow-md bg-white dark:bg-slate-800 overflow-hidden">
+<div class="w-full bg-center bg-no-repeat aspect-[16/9] bg-cover" data-alt="Lush green football pitch at Green Valley Arena" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBvqyUsxLAJ5p3JdYel5a8bhwIhOp83JhbNsKTydIbLCbKe710btv0N5WbW9bHYHDOpyIUtDH2OU2HRNSfIXTK35LvkxPZ-kM9wSZJhQwnBX5_6FKdASWSoSNTUsL1vUG0FXBE4TLSSxex1iAGjSSw1apzLPzh3_aCeBKtmmsLZ5IuyA3d1hb1-0EalEaTl0nA4FU7DO7Xdc7D3XhJRYbrVkzplVCg7YcOKhtKzX-F0EUZ5a_PbDJeZx198oKBzhTgJiZn15QU2oMo");'></div>
+<div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 p-4">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-primary text-sm font-medium leading-normal flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">star</span> 4.8
+                        </p>
+<p class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] mt-1">Green Valley Arena</p>
+</div>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="bg-primary/10 text-primary text-xs font-semibold px-2 py-1 rounded">7v7</span>
+<span class="text-slate-500 dark:text-slate-400 text-sm font-normal flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">location_on</span> 2.4km away
+                    </span>
+</div>
+<!-- Time Slots -->
+<div class="mt-4">
+<p class="text-slate-700 dark:text-slate-300 text-sm font-medium mb-2">Available Today</p>
+<div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+<button class="shrink-0 bg-primary text-white border border-primary rounded-lg px-4 py-2 text-sm font-semibold transition-colors">18:00</button>
+<button class="shrink-0 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded-lg px-4 py-2 text-sm font-medium hover:border-primary transition-colors">19:30</button>
+<button class="shrink-0 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded-lg px-4 py-2 text-sm font-medium hover:border-primary transition-colors">21:00</button>
+</div>
+</div>
+<!-- CTA -->
+<button class="mt-5 w-full bg-primary hover:bg-primary/90 text-white rounded-xl py-3 font-bold text-base transition-colors shadow-sm">
+                    Book Field
+                </button>
+</div>
+</div>
+<!-- Field Card 2 -->
+<div class="flex flex-col items-stretch justify-start rounded-xl shadow-md bg-white dark:bg-slate-800 overflow-hidden">
+<div class="w-full bg-center bg-no-repeat aspect-[16/9] bg-cover" data-alt="Urban astroturf pitch at Downtown Kicks" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuALeOLjppx_Wl9OcOj0E1DapIcW7FIommAEd64RiG_7J0KA0YrCCMR5YN7S04CNUVkQYfwjly5buKhWNTiGTthoFSe5jNisPiA2_JLhgGKDSzArwpA5y7Lem7oD0MKNOqjIjgfRm8bTHSOcmFmu5yYzzIKDy3C47UXhZgkVDz9uaQYybPa26ewZ0PBsx27BLq3kqAs3DEfg3-wvn9MXkOWpM_FrBQQ3MMylxrY-I1i6o5YQneXif__3_rt7HG81H6NJufL14o5XP9Q");'></div>
+<div class="flex w-full min-w-72 grow flex-col items-stretch justify-center gap-1 p-4">
+<div class="flex justify-between items-start">
+<div>
+<p class="text-primary text-sm font-medium leading-normal flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">star</span> 4.5
+                        </p>
+<p class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-[-0.015em] mt-1">Downtown Kicks</p>
+</div>
+</div>
+<div class="flex items-center gap-2 mt-2">
+<span class="bg-primary/10 text-primary text-xs font-semibold px-2 py-1 rounded">5v5</span>
+<span class="text-slate-500 dark:text-slate-400 text-sm font-normal flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">location_on</span> 1.2km away
+                    </span>
+</div>
+<!-- Time Slots -->
+<div class="mt-4">
+<p class="text-slate-700 dark:text-slate-300 text-sm font-medium mb-2">Available Today</p>
+<div class="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+<button class="shrink-0 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded-lg px-4 py-2 text-sm font-medium hover:border-primary transition-colors">17:00</button>
+<button class="shrink-0 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded-lg px-4 py-2 text-sm font-medium hover:border-primary transition-colors">20:00</button>
+</div>
+</div>
+<!-- CTA -->
+<button class="mt-5 w-full bg-primary hover:bg-primary/90 text-white rounded-xl py-3 font-bold text-base transition-colors shadow-sm">
+                    Book Field
+                </button>
+</div>
+</div>
+</div>
+<!-- Bottom Navigation -->
+<div class="fixed bottom-0 left-0 right-0 flex gap-2 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-4 pb-safe pt-2 z-50 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] h-[64px]">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">home</span>
+<p class="text-[10px] font-medium leading-tight">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">group</span>
+<p class="text-[10px] font-medium leading-tight">Matches</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-2xl fill-current">map</span>
+<p class="text-[10px] font-medium leading-tight">Fields</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-2xl">person</span>
+<p class="text-[10px] font-medium leading-tight">Profile</p>
+</a>
+</div>
+</body></html>

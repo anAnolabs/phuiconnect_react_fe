@@ -15,6 +15,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   /** Sign in with Google */
   signInWithGoogle: () => Promise<{ success: boolean; error?: string }>;
+  /** Sign in as Guest */
+  signInAsGuest: () => void;
   /** Sign out */
   signOut: () => Promise<void>;
   /** Refresh user data from backend */
@@ -62,6 +64,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  const signInAsGuest = useCallback(async () => {
+    const result = await authService.signInAsGuest();
+    if (result.success && result.user) {
+      setUser(result.user);
+    }
+  }, []);
+
   const signOut = useCallback(async () => {
     await authService.signOut();
     setUser(null);
@@ -79,6 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading,
     isAuthenticated: !!user,
     signInWithGoogle,
+    signInAsGuest,
     signOut,
     refreshUser,
   };

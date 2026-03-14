@@ -485,3 +485,42 @@ export const MOCK_TOURNAMENTS: Tournament[] = [
     imageUrl: '',
   },
 ];
+
+export const MOCK_FEED = [
+  {
+    id: 'act1',
+    type: 'match_result',
+    homeTeam: { name: 'FC Thủ Đức' },
+    awayTeam: { name: 'Quận 7 United' },
+    score: '3 - 2',
+    location: 'Sân Khang An',
+    time: '2 giờ trước',
+    motm: 'Hoàng Sơn',
+    image: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=800&q=80',
+    likes: 124,
+    comments: 18,
+  },
+  {
+    id: 'act2',
+    type: 'looking_for_match',
+    userName: 'Minh Tuấn',
+    time: '5 giờ trước',
+    message: 'Mình là tiền đạo cánh, đá được các buổi tối khu vực Quận 7. Đội nào thiếu slot cho mình ké với nhé. Cảm ơn anh em!',
+    location: 'Sân Phú Mỹ Hưng',
+    likes: 45,
+    comments: 5,
+  },
+  {
+    id: 'act3',
+    type: 'match_result',
+    homeTeam: { name: 'Bình Thạnh Stars' },
+    awayTeam: { name: 'Gò Vấp Warriors' },
+    score: '1 - 1',
+    location: 'Sân Bạch Đằng',
+    time: 'Hôm qua',
+    motm: 'Văn Khang',
+    image: 'https://images.unsplash.com/photo-1543326727-cf6c39e8f84c?w=800&q=80',
+    likes: 89,
+    comments: 22,
+  }
+];

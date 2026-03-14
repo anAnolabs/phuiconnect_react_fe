@@ -4,30 +4,30 @@
 
 export const COLORS = {
   // Primary
-  primary: '#10B981',       // Green - football field
-  primaryDark: '#059669',
-  primaryLight: '#34D399',
-  primaryBg: '#ECFDF5',
+  primary: '#2FBF71',       // Accent Green
+  primaryDark: '#249C5B',
+  primaryLight: '#5DE096',
+  primaryBg: '#F0FDF4',
 
   // Secondary
-  secondary: '#F59E0B',     // Amber - football
+  secondary: '#F59E0B',
   secondaryDark: '#D97706',
 
   // Accent
-  accent: '#3B82F6',        // Blue
+  accent: '#3B82F6',
   accentDark: '#2563EB',
 
-  // Neutral
+  // Neutral (from design)
   white: '#FFFFFF',
-  background: '#F8FAFC',
+  background: '#F5F6F7',
   surface: '#FFFFFF',
   border: '#E2E8F0',
   divider: '#F1F5F9',
 
   // Text
-  textPrimary: '#0F172A',
-  textSecondary: '#64748B',
-  textLight: '#94A3B8',
+  textPrimary: '#1A1A1A',
+  textSecondary: '#AAACB0', // Requested neutral
+  textLight: '#CBD5E1',
   textWhite: '#FFFFFF',
 
   // Status
@@ -49,9 +49,9 @@ export const COLORS = {
 };
 
 export const FONTS = {
-  regular: 'System',
-  medium: 'System',
-  bold: 'System',
+  regular: 'Inter, sans-serif',
+  medium: 'Inter, sans-serif',
+  bold: 'Inter, sans-serif',
   sizes: {
     xs: 10,
     sm: 12,

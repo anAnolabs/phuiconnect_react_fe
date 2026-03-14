@@ -12,8 +12,6 @@ import LoginScreen from './src/screens/auth/LoginScreen';
 import HomeScreen from './src/screens/home/HomeScreen';
 import ProfileScreen from './src/screens/profile/ProfileScreen';
 import TeamsScreen, { TeamDetailScreen } from './src/screens/team/TeamsScreen';
-import FindMatchScreen from './src/screens/match/FindMatchScreen';
-import FindPlayerScreen from './src/screens/find/FindPlayerScreen';
 import StadiumScreen from './src/screens/stadium/StadiumScreen';
 
 // Navigation
@@ -35,7 +33,7 @@ function App() {
 
 function AppContent() {
   // Auth state from context
-  const { isAuthenticated, isLoading, signOut } = useAuth();
+  const { isAuthenticated, isLoading, signOut, signInAsGuest } = useAuth();
 
   // Navigation state
   const [screen, setScreen] = useState<AppScreen>({ name: 'Main' });
@@ -45,8 +43,7 @@ function AppContent() {
   const navigate = (screenName: string, params?: any) => {
     switch (screenName) {
       case 'Home':
-      case 'FindMatch':
-      case 'FindPlayer':
+      case 'Search':
       case 'Teams':
       case 'Profile':
         setActiveTab(screenName as TabName);
@@ -92,7 +89,11 @@ function AppContent() {
     return (
       <>
         <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
-        <LoginScreen onLogin={() => {}} />
+        <LoginScreen 
+           onNavigate={navigate} 
+           onLoginSuccess={() => {}} 
+           onGuestLogin={signInAsGuest} 
+        />
       </>
     );
   }
@@ -128,10 +129,9 @@ function AppContent() {
     switch (activeTab) {
       case 'Home':
         return <HomeScreen onNavigate={navigate} />;
-      case 'FindMatch':
-        return <FindMatchScreen onNavigate={navigate} />;
-      case 'FindPlayer':
-        return <FindPlayerScreen onNavigate={navigate} />;
+      case 'Search':
+        // Reuse StadiumScreen for 'Search / Fields' feature as per design MVP
+        return <StadiumScreen onNavigate={navigate} />;
       case 'Teams':
         return <TeamsScreen onNavigate={navigate} />;
       case 'Profile':
